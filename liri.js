@@ -11,9 +11,9 @@ var songName = "The Sign";
 var bandName = "";
 var movieURL = "http://www.omdbapi.com/?t=" + movieName + "&apikey=fcc60e39";
 var bandURL = "https://rest.bandsintown.com/artists/" + bandName + "/events?app_id=codingbootcamp";
-var songURL = 
 
-var spotify = new Spotify(keys.spotify);
+
+var spot = new Spotify(keys.spotify);
 
 var action = process.argv[2];
 var userInput = process.argv.slice(3).join(" ");
@@ -43,8 +43,12 @@ switch (action) {
 
 function artistSearch() {
     bandName = userInput;
-    var response;
-    axios.get()
+    axios.get("https://rest.bandsintown.com/artists/" + bandName + "/events?app_id=codingbootcamp&date=upcoming").then(
+        function(response){
+            console.log("band response: ", response.data[0].venue);
+            response.data.forEach(e => console.log(e.venue))
+        }
+    )
 }
 
 //function for spotify-this-song that takes userInput and search spotify
