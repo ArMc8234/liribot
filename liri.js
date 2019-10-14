@@ -6,18 +6,20 @@ require("dotenv").config();
 var Spotify = require("node-spotify-api");
 var keys = require("./keys.js");
 var axios = require("axios");
+var moment = require("moment");
 var movieName = "";
-var songName = "The Sign";
+var songName = "album:the%20sign%30artist:ace%20of%20base";
 var bandName = "";
 var movieURL = "http://www.omdbapi.com/?t=" + movieName + "&apikey=fcc60e39";
 var bandURL = "https://rest.bandsintown.com/artists/" + bandName + "/events?app_id=codingbootcamp";
 
 
-var spot = new Spotify(keys.spotify);
+var spotify = new Spotify(keys.spotify);
 
 var action = process.argv[2];
 var userInput = process.argv.slice(3).join(" ");
 console.log("user input:  ", userInput);
+console.log("\n-------------------------------------\n");
 
 switch (action) {
     case "concert-this":
@@ -45,18 +47,35 @@ function artistSearch() {
     bandName = userInput;
     axios.get("https://rest.bandsintown.com/artists/" + bandName + "/events?app_id=codingbootcamp&date=upcoming").then(
         function(response){
-            console.log("band response: ", response.data[0].venue);
-            response.data.forEach(e => console.log(e.venue))
+            // console.log("band response: ", response.data[0].venue);
+            response.data.forEach(e=> reformatedDateTime = moment(e.datetime,'YYYY MM DD HH:mm:s').format('MMMM Do YYYY, h:mm, a'))
+            response.data.forEach(e => console.log("Venue Name:", e.venue.name, "  City:", e.venue.city, "  Region:", e.venue.region, "  Date:",  reformatedDateTime = moment(e.datetime,'YYYY MM DD HH:mm:s').format('MMMM Do YYYY, h:mm, a')))
         }
-    )
+    ).catch(function(error){
+        console.log(error);
+    })
 }
 
 //function for spotify-this-song that takes userInput and search spotify
 
+function songSearch() {
+    songName = userInput;
+    spotify
+    .search({ type: 'track', query: songName })
+    .then(function(response) {
+    //   console.log(JSON.stringify(response, null, 1));
+        response.tracks.items.forEach(e => console.log("Artist: ", e.album.artists[0].name, "  Song Name: ", e.name, "  Album: ", e.album.name, "  Preview Url: ", e.preview_url ))
+    //     console.log("Artist: ", response.tracks.items[19].album.artists[0].name);
+    //     console.log("Song Name: ", response.tracks.items[19].name);
+    //     console.log("Album: ", response.tracks.items[19].album.name);
+    //     console.log("Preview Url: ", response.tracks.items[19].preview_url);
+    //     console.log("\n-------------------------------------\n");
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+}
 //function for movie-this that takes userInput and search omdb
-
-
-
 
 function movieSearch() {
     movieName = userInput.replace(/" "/g, '+');
