@@ -7,14 +7,14 @@ var Spotify = require("node-spotify-api");
 var keys = require("./keys.js");
 var axios = require("axios");
 var moment = require("moment");
+// var randomText = require("./random.txt");
 var movieName = "";
 var songName = "album:the%20sign%30artist:ace%20of%20base";
 var bandName = "";
-var movieURL = "http://www.omdbapi.com/?t=" + movieName + "&apikey=fcc60e39";
-var bandURL = "https://rest.bandsintown.com/artists/" + bandName + "/events?app_id=codingbootcamp";
-
+var fs = require("fs");
 
 var spotify = new Spotify(keys.spotify);
+// var randomText = new randomText(random.spotify);
 
 var action = process.argv[2];
 var userInput = process.argv.slice(3).join(" ");
@@ -37,6 +37,16 @@ switch (action) {
         movieSearch();
         break;
     case "do-what-it-says":
+        //get instruction from random.txt file and run node liri.js
+        fs.readFile("random.txt", "utf8", function(err, data){
+            if(err){
+               return console.log(err);
+            }
+            // console.log(data);
+            var output = data.slice(18);
+            console.log(output);
+            songSearch(output);
+        })
         
         break;
 }
@@ -58,7 +68,7 @@ function artistSearch() {
 
 //function for spotify-this-song that takes userInput and search spotify
 
-function songSearch() {
+function songSearch(userInput) {
     songName = userInput;
     spotify
     .search({ type: 'track', query: songName })
