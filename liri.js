@@ -7,14 +7,13 @@ var Spotify = require("node-spotify-api");
 var keys = require("./keys.js");
 var axios = require("axios");
 var moment = require("moment");
-// var randomText = require("./random.txt");
 var movieName = "";
-var songName = "album:the%20sign%30artist:ace%20of%20base";
+var songName = "album:the sign artist:ace of base";
 var bandName = "";
 var fs = require("fs");
 
 var spotify = new Spotify(keys.spotify);
-// var randomText = new randomText(random.spotify);
+
 
 var action = process.argv[2];
 var userInput = process.argv.slice(3).join(" ");
@@ -29,15 +28,16 @@ switch (action) {
 
     case "spotify-this-song":
         //song search function here;
-        songSearch();
+        songSearch(userInput);
         break;
     
     case "movie-this":
         //movie search here;
         movieSearch();
         break;
+
     case "do-what-it-says":
-        //get instruction from random.txt file and run node liri.js
+        //get instruction from random.txt file and send data into song search
         fs.readFile("random.txt", "utf8", function(err, data){
             if(err){
                return console.log(err);
@@ -69,6 +69,9 @@ function artistSearch() {
 //function for spotify-this-song that takes userInput and search spotify
 
 function songSearch(userInput) {
+    if(!userInput){
+        userInput = "The Sign Ace of Base";
+    }
     songName = userInput;
     spotify
     .search({ type: 'track', query: songName })
@@ -88,6 +91,9 @@ function songSearch(userInput) {
 //function for movie-this that takes userInput and search omdb
 
 function movieSearch() {
+    if (!userInput){
+        userInput = "Mr. Nobody";
+    }
     movieName = userInput.replace(/" "/g, '+');
     var response;
     axios.get("https://www.omdbapi.com/?t=" + movieName + "&apikey=fcc60e39").then(
